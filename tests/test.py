@@ -22,5 +22,5 @@ if __name__ == '__main__':
     test_suite.addTest(unittest.makeSuite(TestInputValidator))
     test_suite.addTest(unittest.makeSuite(TestCFFlattenMethods))
 
-    runner = unittest.TextTestRunner()
+    runner = unittest.TextTestRunner(verbosity=2)
     runner.run(test_suite)

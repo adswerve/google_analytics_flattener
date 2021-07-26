@@ -131,6 +131,13 @@ class GaExportedNestedDataStorage(object):
         if self.date_shard >= '20180523':
             self.session_fields.insert(5, 'clientId')
 
+        self.privacy_info_fields = ["privacyInfo.analytics_storage", "privacyInfo.ads_storage"]
+
+        if self.date_shard >= '20210720':
+            index_for_new_field = len(self.session_fields)
+            for i in range(0, len(self.privacy_info_fields)):
+                self.session_fields.insert(index_for_new_field+i, self.privacy_info_fields[i])
+
         self.hit_fields = [
             'hits.hitNumber'
             , 'hits.time'
@@ -165,6 +172,8 @@ class GaExportedNestedDataStorage(object):
 
         if self.date_shard >= '20170711':
             self.hit_fields.insert(28, 'hits.dataSource')
+
+        self.hit_uses_transient_token = ["hits.uses_transient_token"]
 
         self.hit_transaction_fields = [
             'hits.transaction.transactionId'
@@ -440,6 +449,9 @@ class GaExportedNestedDataStorage(object):
             qry += ",%s as %s" % (f.replace("hits", self.alias["hits"]), f.replace(".", "_"))
         if self.date_shard >= '20161025':
             for f in self.hit_content_group_fields:
+                qry += ",%s as %s" % (f.replace("hits", self.alias["hits"]), f.replace(".", "_"))
+        if self.date_shard >= '20210720':
+            for f in self.hit_uses_transient_token:
                 qry += ",%s as %s" % (f.replace("hits", self.alias["hits"]), f.replace(".", "_"))
         if custom_vars:
             # Maximum of nr_custom_vars allowed per property
