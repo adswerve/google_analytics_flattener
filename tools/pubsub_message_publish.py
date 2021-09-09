@@ -1,7 +1,6 @@
 from google.cloud import pubsub_v1
 import json
 import datetime, time
-from tests.test_base import BaseUnitTest
 
 # To authenticate, run the following command.  The account you choose will execute this python script
 # gcloud auth application-default login
@@ -9,30 +8,18 @@ from tests.test_base import BaseUnitTest
 '''*****************************'''
 ''' Configuration Section Start '''
 '''*****************************'''
-topic_id =  "ga-flattener-deployment-topic"  # pubsub topic your cloud function is subscribed to Example: [Deployment Name]-topic
-project_id = "as-dev-ruslan"  # GCP project ID, example:  [PROJECT_ID]
+topic_id =  "adswervegaflat-topic"  # pubsub topic your cloud function is subscribed to Example: [Deployment Name]-topic
+project_id = "newellbrandsga360"  # GCP project ID, example:  [PROJECT_ID]
 dry_run = False   # set to False to Backfill.  Setting to True will not pubish any messages to pubsub, but simply show what would have been published.
 # Desired dates to backfill, both start and end are inclusive
-backfill_range_start = datetime.datetime(2021, 7, 19)
-backfill_range_end = datetime.datetime(2021, 7, 20)  # datetime.datetime.today()
-datasets_to_backfill = ["24973611"]     #GA Views to backfill, "24973611"
+backfill_range_start = datetime.datetime(2019, 1, 21)
+backfill_range_end = datetime.datetime(2021, 7, 28)  # datetime.datetime.today()
+datasets_to_backfill = ["82589673"]     #GA Views to backfill, "24973611"
 '''*****************************'''
 '''  Configuration Section End  '''
 '''*****************************'''
 #Seconds to sleep between each property date shard
 SLEEP_TIME = 5  # throttling
-
-#Unit Testing flag
-IS_TEST = False  # set to False to backfill, True for unit testing
-
-
-if IS_TEST:
-    datasets_to_backfill = [BaseUnitTest.DATASET]
-    y = int(BaseUnitTest.DATE[0:4])
-    m = int(BaseUnitTest.DATE[4:6])
-    d = int(BaseUnitTest.DATE[6:8])
-    backfill_range_start = datetime.datetime(y, m, d)
-    backfill_range_end = datetime.datetime(y, m, d)
 
 num_days_in_backfill_range = int((backfill_range_end - backfill_range_start).days) + 1
 publisher = pubsub_v1.PublisherClient()
